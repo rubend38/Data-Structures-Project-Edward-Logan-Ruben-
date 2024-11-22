@@ -94,6 +94,25 @@ public class ReservationSystem {
     }
 
     public static void main(String args[]) {
+
+        int counterFieldLevel = 500;
+        int counterMainLevel = 1000;
+        int counterGrandstandLevel = 2000;
+
+        Set<Chair> availableChairs = new HashSet<>();
+
+        for (int i = 1; i <= counterFieldLevel; i++) {
+           availableChairs.add(new Chair(i, "Field Level", 300));
+        }
+        for (int i = 1; i <= counterMainLevel; i++) {
+            availableChairs.add(new Chair(i + counterFieldLevel, "Main Level", 120));
+        }
+        for (int i = 1; i <= counterGrandstandLevel; i++) {
+            availableChairs.add(new Chair(i + counterFieldLevel + counterMainLevel, "Grandstand Level", 45));
+        }
+          System.out.println("Available chairs initialized. Total: " + availableChairs.size());
+
+
         
         client Edward = new client("Edward", "edward.carde@upr.edu", "787-612-7168");
         System.out.println(Edward.toString());
