@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 import java.util.Queue;
+import java.util.Scanner;
 
 public class ReservationSystem {
 
@@ -93,12 +94,49 @@ public class ReservationSystem {
         }
 
     }
+    public static void commandPrompt(){
+        System.out.println("-------------------------------------------------------------");
+        System.out.println("Available Options:    ");
+        System.out.println();
+
+        System.out.println("1. Make reservation.");
+        System.out.println("2. See existing reservations.");
+        System.out.println("3. See available seating.");
+        System.out.println("4. See wait lists.");
+        System.out.println("5. Nothing Else");
+    }
+    public static void showAvailableSeats(Set<Chair> availableChairs) {
+        int fieldLevelCount = 0;
+        int mainLevelCount = 0;
+        int grandstandLevelCount = 0;
+
+        for (Chair chair : availableChairs) {
+            if (chair.isavailable()) {
+                switch (chair.getsection()) {
+                    case "Field Level":
+                        fieldLevelCount++;
+                        break;
+                    case "Main Level":
+                        mainLevelCount++;
+                        break;
+                    case "Grandstand Level":
+                        grandstandLevelCount++;
+                        break;
+                }
+            }
+        }
+        System.out.println("Field Level:       "+  fieldLevelCount +" at $300" );
+        System.out.println("Main Level:       " + mainLevelCount +" at $120" );
+        System.out.println("Grandstand Level: " + grandstandLevelCount  +" at $45");
+    }
 
     public static void main(String args[]) {
 
         int counterFieldLevel = 500;
         int counterMainLevel = 1000;
         int counterGrandstandLevel = 2000;
+        int optionChosen = 0;
+        Scanner scanner = new Scanner(System.in);
 
         Set<Chair> availableChairs = new HashSet<>();
 
@@ -111,15 +149,32 @@ public class ReservationSystem {
         for (int i = 1; i <= counterGrandstandLevel; i++) {
             availableChairs.add(new Chair(i + counterFieldLevel + counterMainLevel, "Grandstand Level", 45));
         }
-          System.out.println("Available chairs initialized. Total: " + availableChairs.size());
 
+        System.out.println("-------------------------------------------------------------");  
+        System.out.println("Available seats:" );
+        System.out.println();
+        showAvailableSeats(availableChairs);
+        while(optionChosen != 5){
+            commandPrompt();
+            System.out.println();
+            System.out.print("Please enter your option here: ");
+            optionChosen = scanner.nextInt();
+
+            if(optionChosen > 5 || optionChosen < 1){
+                System.out.println("Option must be within 1 and 5");
+
+            }
+        }
+        System.out.println("-------------------------------------------------------------"); 
+        System.out.println("Thank You! ");
+        System.out.println("-------------------------------------------------------------"); 
 
         
         client Edward = new client("Edward", "edward.carde@upr.edu", "787-612-7168");
-        System.out.println(Edward.toString());
+        //System.out.println(Edward.toString());
 
         Chair Chair17 = new Chair(17, "Field Level", 300);
-        Chair17.reservation(Edward.getName()); 
+        //Chair17.reservation(Edward.getName()); 
 
 
     }
