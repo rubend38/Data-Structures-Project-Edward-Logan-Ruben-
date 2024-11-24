@@ -94,6 +94,63 @@ public class ReservationSystem {
         }
 
     }
+    static class Stadium{
+        private Set<Chair> availableChairs;
+        private HashMap<Chair,client> reservations;
+        private Queue<String> fieldWaitlist;
+        private Queue<String> mainWaitlist;
+        private Queue<String> grandstandWaitlist;
+        private LinkedList<String> transactionHistory;
+        private Stack<String> undoStack;
+
+
+        public Stadium(int fieldCapacity, int mainCapacity, int grandstandCapacity){
+            availableChairs = new HashSet<>();
+            reservations = new HashMap<>();
+            fieldWaitlist = new LinkedList<>();
+            mainWaitlist = new LinkedList<>();
+            grandstandWaitlist = new LinkedList<>();
+            transactionHistory = new LinkedList<>();
+            undoStack = new Stack<>();
+
+
+            for (int i = 1; i <= fieldCapacity; i++) {
+               availableChairs.add(new Chair(i, "Field Level", 300));
+            }
+            for (int i = 1; i <= mainCapacity; i++) {
+                availableChairs.add(new Chair(i + fieldCapacity, "Main Level", 120));
+            }
+            for (int i = 1; i <= grandstandCapacity; i++) {
+                availableChairs.add(new Chair(i + fieldCapacity + mainCapacity , "Grandstand Level", 45));
+            }
+            
+        }
+        public void showAvailableSeats() {
+            int fieldLevelCount = 0;
+            int mainLevelCount = 0;
+            int grandstandLevelCount = 0;
+    
+            for (Chair chair : availableChairs) {
+                if (chair.isavailable()) {
+                    switch (chair.getsection()) {
+                        case "Field Level":
+                            fieldLevelCount++;
+                            break;
+                        case "Main Level":
+                            mainLevelCount++;
+                            break;
+                        case "Grandstand Level":
+                            grandstandLevelCount++;
+                            break;
+                    }
+                }
+            }
+            System.out.println("Field Level:       "+  fieldLevelCount +" at $300" );
+            System.out.println("Main Level:       " + mainLevelCount +" at $120" );
+            System.out.println("Grandstand Level: " + grandstandLevelCount  +" at $45");
+        }
+
+    }
     public static void commandPrompt(){
         System.out.println("-------------------------------------------------------------");
         System.out.println("Available Options:    ");
@@ -105,55 +162,19 @@ public class ReservationSystem {
         System.out.println("4. See wait lists.");
         System.out.println("5. Nothing Else");
     }
-    public static void showAvailableSeats(Set<Chair> availableChairs) {
-        int fieldLevelCount = 0;
-        int mainLevelCount = 0;
-        int grandstandLevelCount = 0;
-
-        for (Chair chair : availableChairs) {
-            if (chair.isavailable()) {
-                switch (chair.getsection()) {
-                    case "Field Level":
-                        fieldLevelCount++;
-                        break;
-                    case "Main Level":
-                        mainLevelCount++;
-                        break;
-                    case "Grandstand Level":
-                        grandstandLevelCount++;
-                        break;
-                }
-            }
-        }
-        System.out.println("Field Level:       "+  fieldLevelCount +" at $300" );
-        System.out.println("Main Level:       " + mainLevelCount +" at $120" );
-        System.out.println("Grandstand Level: " + grandstandLevelCount  +" at $45");
-    }
 
     public static void main(String args[]) {
 
-        int counterFieldLevel = 500;
-        int counterMainLevel = 1000;
-        int counterGrandstandLevel = 2000;
+        Stadium stateFarmStadium = new Stadium(500,1000,2000);
+
         int optionChosen = 0;
         Scanner scanner = new Scanner(System.in);
 
-        Set<Chair> availableChairs = new HashSet<>();
-
-        for (int i = 1; i <= counterFieldLevel; i++) {
-           availableChairs.add(new Chair(i, "Field Level", 300));
-        }
-        for (int i = 1; i <= counterMainLevel; i++) {
-            availableChairs.add(new Chair(i + counterFieldLevel, "Main Level", 120));
-        }
-        for (int i = 1; i <= counterGrandstandLevel; i++) {
-            availableChairs.add(new Chair(i + counterFieldLevel + counterMainLevel, "Grandstand Level", 45));
-        }
 
         System.out.println("-------------------------------------------------------------");  
         System.out.println("Available seats:" );
         System.out.println();
-        showAvailableSeats(availableChairs);
+        stateFarmStadium.showAvailableSeats();
         while(optionChosen != 5){
             commandPrompt();
             System.out.println();
@@ -176,6 +197,7 @@ public class ReservationSystem {
         Chair Chair17 = new Chair(17, "Field Level", 300);
         //Chair17.reservation(Edward.getName()); 
 
+      
 
     }
 
