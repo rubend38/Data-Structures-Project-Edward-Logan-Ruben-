@@ -1,11 +1,4 @@
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Stack;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*; 
 
 public class ReservationSystem {
 
@@ -97,9 +90,9 @@ public class ReservationSystem {
     static class Stadium{
         private Set<Chair> availableChairs;
         private HashMap<Chair,client> reservations;
-        private Queue<String> fieldWaitlist;
-        private Queue<String> mainWaitlist;
-        private Queue<String> grandstandWaitlist;
+        private Queue<client> fieldWaitlist;
+        private Queue<client> mainWaitlist;
+        private Queue<client> grandstandWaitlist;
         private LinkedList<String> transactionHistory;
         private Stack<String> undoStack;
 
@@ -150,6 +143,65 @@ public class ReservationSystem {
             System.out.println("Grandstand Level: " + grandstandLevelCount  +" at $45");
         }
 
+        public String makeReservation(client customer, String section, List<Integer> chairNumbers) {
+
+            List<Chair> chairsToReserve = new ArrayList<>(); 
+
+            //Checking if chairs are available 
+
+            for(int chairNumber: chairNumbers){
+                boolean found = false; 
+            
+                for(Chair chair: availableChairs){
+
+                    if(chair.getnumber() == chairNumber){
+                        if(!chair.isavailable()){
+                            return "Chair number " + chairNumber + " is not available."; 
+                        }
+                        chairsToReserve.add(chair); 
+                        found = true; 
+                        break; 
+                    }
+                }
+
+                if(!found){
+                    return "Chair number " + chairNumber + " does not exist."; 
+
+                }
+            }
+
+            //Reserve all requred chairs 
+            for(Chair chair: chairsToReserve){
+                chair.reservation(customer.getName()); 
+                reservations.put(chair,customer); 
+                transactionHistory.add("Reserved: " + customer.getName() + " in " + section + " (Chair " + chair.getnumber() + ")"); 
+                undoStack.push("RESERVE: " + chair.getnumber() + ":" + customer.getName()); 
+
+
+            }
+
+            return "Reservation succesful for " + customer.getName() + " (Chairs " + chairNumbers + ")."; 
+                    
+        }
+                
+
+            
+        
+
+        private Queue<client> getWaitlist(String section) {
+            switch (section) {
+                case "Field Level":
+                    return fieldWaitlist;
+                case "Main Level":
+                    return mainWaitlist; 
+                case "Grandstand Level":
+                    return grandstandWaitlist; 
+                default:
+                    return null; 
+            }
+
+        }
+
     }
     public static void commandPrompt(){
         System.out.println("-------------------------------------------------------------");
@@ -167,35 +219,38 @@ public class ReservationSystem {
 
         Stadium stateFarmStadium = new Stadium(500,1000,2000);
 
-        int optionChosen = 0;
-        Scanner scanner = new Scanner(System.in);
+        // int optionChosen = 0;
+        // Scanner scanner = new Scanner(System.in);
 
 
-        System.out.println("-------------------------------------------------------------");  
-        System.out.println("Available seats:" );
-        System.out.println();
-        stateFarmStadium.showAvailableSeats();
-        while(optionChosen != 5){
-            commandPrompt();
-            System.out.println();
-            System.out.print("Please enter your option here: ");
-            optionChosen = scanner.nextInt();
+        // System.out.println("-------------------------------------------------------------");  
+        // System.out.println("Available seats:" );
+        // System.out.println();
+        // stateFarmStadium.showAvailableSeats();
+        // while(optionChosen != 5){
+        //     commandPrompt();
+        //     System.out.println();
+        //     System.out.print("Please enter your option here: ");
+        //     optionChosen = scanner.nextInt();
 
-            if(optionChosen > 5 || optionChosen < 1){
-                System.out.println("Option must be within 1 and 5");
+        //     if(optionChosen > 5 || optionChosen < 1){
+        //         System.out.println("Option must be within 1 and 5");
 
-            }
-        }
-        System.out.println("-------------------------------------------------------------"); 
-        System.out.println("Thank You! ");
-        System.out.println("-------------------------------------------------------------"); 
+        //     }
+        // }     
+        // System.out.println("-------------------------------------------------------------"); 
+        // System.out.println("Thank You! ");
+        // System.out.println("-------------------------------------------------------------"); 
 
         
         client Edward = new client("Edward", "edward.carde@upr.edu", "787-612-7168");
         //System.out.println(Edward.toString());
-
+        client Logan = new client("Logan", "logan@upr.edu","787"); 
         Chair Chair17 = new Chair(17, "Field Level", 300);
         //Chair17.reservation(Edward.getName()); 
+
+        System.out.println(stateFarmStadium.makeReservation(Edward, "Field Level", Arrays.asList(344,345,346,347,348,349))); // Reserva 3 asientos
+        // System.out.println(stateFarmStadium.makeReservation(Logan, "Field Level", 2)); // Reserva 2 asientos
 
       
 
