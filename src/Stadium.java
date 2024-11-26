@@ -1,21 +1,16 @@
+package src; 
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Stack;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*; 
+
 
 
 
     public class Stadium{
         private Set<Chair> availableChairs;
         private HashMap<Chair,Client> reservations;
-        private Queue<String> fieldWaitlist;
-        private Queue<String> mainWaitlist;
-        private Queue<String> grandstandWaitlist;
+        private Queue<Client> fieldWaitlist;
+        private Queue<Client> mainWaitlist;
+        private Queue<Client> grandstandWaitlist;
         private LinkedList<String> transactionHistory;
         private Stack<String> undoStack;
 
@@ -76,6 +71,61 @@ import java.util.Scanner;
         System.out.println("3. See available seating.");
         System.out.println("4. See wait lists.");
         System.out.println("5. Nothing Else");
+    }
+    
+    public String makeReservation(Client customer, String section, List<Integer> chairNumbers) {
+
+        List<Chair> chairsToReserve = new ArrayList<>();
+
+        // Checking if chairs are available
+
+        for (int chairNumber : chairNumbers) {
+            boolean found = false;
+
+            for (Chair chair : availableChairs) {
+
+                if (chair.getnumber() == chairNumber) {
+                    if (!chair.isavailable()) {
+                        return "Chair number " + chairNumber + " is not available.";
+                    }
+                    chairsToReserve.add(chair);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                return "Chair number " + chairNumber + " does not exist.";
+
+            }
+        }
+
+        // Reserve all requred chairs
+        for (Chair chair : chairsToReserve) {
+            chair.reservation(customer.getName());
+            reservations.put(chair, customer);
+            transactionHistory
+                    .add("Reserved: " + customer.getName() + " in " + section + " (Chair " + chair.getnumber() + ")");
+            undoStack.push("RESERVE: " + chair.getnumber() + ":" + customer.getName());
+
+        }
+
+        return "Reservation succesful for " + customer.getName() + " (Chairs " + chairNumbers + ").";
+
+    }
+
+    private Queue<Client> getWaitlist(String section) {
+        switch (section) {
+            case "Field Level":
+                return fieldWaitlist;
+            case "Main Level":
+                return mainWaitlist;
+            case "Grandstand Level":
+                return grandstandWaitlist;
+            default:
+                return null;
+        }
+
     }
 
     public static void main(String args[]) {
