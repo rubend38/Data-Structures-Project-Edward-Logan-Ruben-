@@ -1,3 +1,5 @@
+import java.util.*; 
+
 public class Client {
     private String name;
     private String email;
@@ -24,6 +26,10 @@ public class Client {
 
     public String toString() {
         return "client[name=" + name + ", email=" + email + ", phone=" + phone + "]";
+    }
+
+    public List<Integer> getReservations(Stadium stadium){
+        return stadium.getClientReservations(this); 
     }
 
 }
