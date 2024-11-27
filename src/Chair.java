@@ -5,6 +5,7 @@ public class Chair {
     private String client;
     private String section;
 
+    //chair object constructer
     public Chair(int number, String section, int price) {
         this.number = number;
         this.price = price;
@@ -12,7 +13,7 @@ public class Chair {
         this.client = null;
         this.section = section;
     }
-
+    //checks to see if the current object of chair is available or not.
     public boolean reservation(String client) {
         if (available) {
             this.available = false;
@@ -24,7 +25,7 @@ public class Chair {
         }
         return false;
     }
-
+    //makes the chair available if it was previously unavailable.
     public String cancelReservation() { // Devuelve el client que canceló la reserva
         if (!available) {
             this.available = true;
@@ -36,6 +37,7 @@ public class Chair {
         return null;
     }
 
+    //the methods below are a set of getters. 
     public boolean isavailable() {
             return available;
             }

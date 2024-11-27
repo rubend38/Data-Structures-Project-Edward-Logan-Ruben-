@@ -4,6 +4,8 @@ public class ReservationSystem {
 
 
     public static void commandPrompt() {
+
+        //Gives user available options related to reservations.
         System.out.println("-------------------------------------------------------------");
         System.out.println("Available Options:    ");
         System.out.println();
@@ -19,6 +21,8 @@ public class ReservationSystem {
     }
 
     public static void IntegratedSystem(){
+
+        //Creates the stadium to be manipulated
         Stadium stateFarmStadium = new Stadium(500, 1000, 2000);
 
 
@@ -32,28 +36,26 @@ public class ReservationSystem {
         
 
 
-
+        //initializing command prompt variables
         int optionChosen = 0;
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("-------------------------------------------------------------");
         System.out.println("Available seats:" );
         System.out.println();
-        stateFarmStadium.showAvailableSeats();
+        stateFarmStadium.showAvailableSeats();//shows the user the available seating areas to choose from
         
+        //continues to run the command prompt loop until the option chosen is 6.
         while(optionChosen != 6){
             commandPrompt();
             System.out.println();
-            stateFarmStadium.updateAvailableSeats();
+            stateFarmStadium.updateAvailableSeats();//updates any changes made to the seating reservations
             System.out.print("Please enter your option here: ");
+            //Saves user input into variable for option selection
             optionChosen = scanner.nextInt();
 
-            // if(optionChosen > 5 || optionChosen < 1){
-            //     System.out.println("Option must be within 1 and 5");
-
-            // }
-
             switch(optionChosen){
+                //if 1 is entered as the desired option then information is asked to the user and a list of chairs is reserved.
                 case 1: 
                     System.out.println("-------------------------------------------------------------");
                     System.out.println("Enter your name: ");
@@ -83,19 +85,22 @@ public class ReservationSystem {
                     String result = stateFarmStadium.makeReservation(customer, section, chairNumbers);
                     System.out.println(result);
                 case 2:
+                //if 2 is inputed by the user then the list of made reservations is showed.
                     stateFarmStadium.showReservations(); 
                     break; 
 
+                //shows available seating for new reservations. 
                 case 3:
                     stateFarmStadium.showAvailableSeats(); 
                     break; 
-
+                //Shows the people on waitlist for new section seats.
                 case 4:
                     stateFarmStadium.showWaitlist(); 
                     break; 
                 
+                //if option 5 is chosen then the system will ask the user for information and cancel any reservation under that information.
                 case 5:
-                    
+                
                     System.out.println("Please enter the name under the reservation");
                     scanner.nextLine();
                     String name2 = scanner.nextLine();
@@ -118,6 +123,7 @@ public class ReservationSystem {
                     stateFarmStadium.cancelReservation(customer2, chairNumbers2);
                     stateFarmStadium.updateAvailableSeats();
                     break;
+                    //if option 6 is chosen then the system's command prompt will close and the program will stop running
                 case 6:
                     System.out.println("-------------------------------------------------------------");
                     System.out.println("Thank You! ");
