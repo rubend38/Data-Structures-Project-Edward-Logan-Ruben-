@@ -30,13 +30,45 @@ public class ReservationSystem {
         while(optionChosen != 5){
             commandPrompt();
             System.out.println();
+            stateFarmStadium.updateAvailableSeats();
             System.out.print("Please enter your option here: ");
             optionChosen = scanner.nextInt();
 
             if(optionChosen > 5 || optionChosen < 1){
                 System.out.println("Option must be within 1 and 5");
 
+            }
+            if(optionChosen == 1){
+                System.out.println("-------------------------------------------------------------");
+                System.out.println("Enter your name: ");
+
+                scanner.nextLine();
+                String name = scanner.nextLine();
+            
+                System.out.println("Enter your email: ");
+                String email = scanner.nextLine();
+
+                System.out.println("Enter your phone number: ");
+                String phone = scanner.nextLine();
+                
+                Client customer = new Client(name, email, phone);
+
+                System.out.println("Enter the section you want to reserve seats in: ");
+                String section = scanner.nextLine();
+
+                System.out.println("Enter the chair numbers to reserve(comma-separated): ");
+                List<Integer> chairNumbers = new ArrayList<>();
+                
+                for(String chairNumber : scanner.nextLine().split(",")){
+                    chairNumbers.add(Integer.parseInt(chairNumber.trim())); //Trim used to remove spaces, if there are any
                 }
+
+                String result = stateFarmStadium.makeReservation(customer, section, chairNumbers);
+                System.out.println(result);
+            }
+            if(optionChosen == 4){
+                stateFarmStadium.printWatilists();
+            }
             }
         System.out.println("-------------------------------------------------------------");
         System.out.println("Thank You! ");

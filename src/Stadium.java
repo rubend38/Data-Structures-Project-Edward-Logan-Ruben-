@@ -15,6 +15,9 @@ public class Stadium{
     private Queue<Client> grandstandWaitlist;
     private LinkedList<String> transactionHistory;
     private Stack<String> undoStack;
+    private int fieldLevelCount = 0;
+    private int mainLevelCount = 0;
+    private int grandstandLevelCount = 0;
 
 
     public Stadium(int fieldCapacity, int mainCapacity, int grandstandCapacity){
@@ -38,11 +41,10 @@ public class Stadium{
         }
         
     }
-    public void showAvailableSeats() {
-        int fieldLevelCount = 0;
-        int mainLevelCount = 0;
-        int grandstandLevelCount = 0;
-
+    public void updateAvailableSeats() {
+        fieldLevelCount = 0;
+        mainLevelCount = 0;
+        grandstandLevelCount = 0;
         for (Chair chair : availableChairs) {
             if (chair.isavailable()) {
                 switch (chair.getsection()) {
@@ -58,19 +60,49 @@ public class Stadium{
                 }
             }
         }
+    }
+        
+    public void showAvailableSeats() {
+        updateAvailableSeats();
         System.out.println("Field Level:       "+  fieldLevelCount +" at $300" );
         System.out.println("Main Level:       " + mainLevelCount +" at $120" );
         System.out.println("Grandstand Level: " + grandstandLevelCount  +" at $45");
     }
 
 
-
     public String makeReservation(Client customer, String section, List<Integer> chairNumbers) {
 
         List<Chair> chairsToReserve = new ArrayList<>();
+        int price = 0;
+        String normalizedSection = "";
+        //Checking if section is full. Automatically adds the client to the queue if the section is full
+        if(section.equalsIgnoreCase("Field Level")){
+            price = 300;
+            normalizedSection = "Field Level";
+            if(fieldLevelCount == 0){
+                fieldWaitlist.add(customer);
+                return section + " section is full. Added " + customer.getName()+ " to " + section + " waitlist.";
+            }
+        } else if(section.equalsIgnoreCase("Main Level")){
+            price = 120;
+            normalizedSection = "Main Level";
+            if(mainLevelCount == 0){
+                mainWaitlist.add(customer);
+                return section + " section is full. Added " + customer.getName()+ " to " + section + " waitlist.";
+            }
+        } else if(section.equalsIgnoreCase("Grandstand Level")){
+            price = 45;
+            normalizedSection = "Grandstand Level";
+            if(grandstandLevelCount == 0){
+                grandstandWaitlist.add(customer);
+                return section + " section is full. Added " + customer.getName()+ " to " + section + " waitlist.";
+            }
+        } else {
+            return "Invalid section.";
+        }
+
 
         // Checking if chairs are available
-
         for (int chairNumber : chairNumbers) {
             boolean found = false;
 
@@ -80,9 +112,9 @@ public class Stadium{
                     if (!chair.isavailable()) {
                         return "Chair number " + chairNumber + " is not available.";
                     }
+
                     chairsToReserve.add(chair);
-                    found = true;
-                    break;
+                    found = true; 
                 }
             }
 
@@ -99,10 +131,9 @@ public class Stadium{
             transactionHistory
                     .add("Reserved: " + customer.getName() + " in " + section + " (Chair " + chair.getnumber() + ")");
             undoStack.push("RESERVE: " + chair.getnumber() + ":" + customer.getName());
-
         }
-
-        return "Reservation succesful for " + customer.getName() + " (Chairs " + chairNumbers + ").";
+        
+        return "Reservation succesful for " + customer.getName() + ": Chairs: " + chairNumbers + " in section " + normalizedSection + ". Your total is: $" + price * chairNumbers.size() + ".";
 
     }
 
@@ -163,17 +194,35 @@ public class Stadium{
         return "Cancellation successful for " + customer.getName() + ". Chairs: " + chairNumbers; 
     }
 
-    private Queue<Client> getWaitlist(String section) {
-        switch(section) {
-            case "Field Level": 
+    public Queue<Client> getWaitlist(String section) {
+        String normalizedSection = section.toLowerCase().trim();
+
+        switch(normalizedSection) {
+            case "field level": 
                 return fieldWaitlist; 
-            case "Main Level":
+            case "main level":
                 return mainWaitlist; 
-            case "Grandstand Level":
+            case "grandstand level":
                 return grandstandWaitlist; 
             default:
                 return null; 
 
+        }
+    }
+
+    public void printWatilists(){
+        System.out.println("-------------------------------------------------------------");
+        System.out.println("Field Level Waitlist: ");
+        for(Client client: fieldWaitlist){
+            System.out.println(client.toString());
+        }
+        System.out.println("Main Level Waitlist: ");
+        for(Client client: mainWaitlist){
+            System.out.println(client.toString());
+        }
+        System.out.println("Grandstand Level Waitlist: ");
+        for(Client client: grandstandWaitlist){
+            System.out.println(client.toString());
         }
     }
 
