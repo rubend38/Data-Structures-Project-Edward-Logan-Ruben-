@@ -156,6 +156,7 @@ public class Stadium{
                 if(chair.getnumber() == chairNumber && reservations.get(chair).equals(customer)){
                     chairsToCancel.add(chair); 
                     found = true; 
+                    System.out.println("Reservation Found and Cancelled");
                     break; 
                 }
             }

@@ -12,7 +12,8 @@ public class ReservationSystem {
         System.out.println("2. See existing reservations.");
         System.out.println("3. See available seating.");
         System.out.println("4. See wait lists.");
-        System.out.println("5. Nothing Else");
+        System.out.println("5 Cancel reservation");
+        System.out.println("6. Exit");
         System.out.println("-------------------------------------------------------------");
 
     }
@@ -21,9 +22,10 @@ public class ReservationSystem {
         Stadium stateFarmStadium = new Stadium(500, 1000, 2000);
 
 
+
         Client Edward = new Client("Edward", "edward.carde@upr.edu", "787-612-7168");
         System.out.println(stateFarmStadium.makeReservation(Edward, "Field Level",
-         Arrays.asList(344,345,346,347,348,349))); 
+        Arrays.asList(344,345,346,347,348,349))); 
         System.out.println("Edward Reservations: " + Edward.getReservations(stateFarmStadium)); 
         System.out.println(stateFarmStadium.cancelReservation(Edward, Arrays.asList(344,345))); 
         System.out.println("Edward Reservations: " + Edward.getReservations(stateFarmStadium));
@@ -39,7 +41,7 @@ public class ReservationSystem {
         System.out.println();
         stateFarmStadium.showAvailableSeats();
         
-        while(optionChosen != 5){
+        while(optionChosen != 6){
             commandPrompt();
             System.out.println();
             stateFarmStadium.updateAvailableSeats();
@@ -67,7 +69,8 @@ public class ReservationSystem {
                     
                     Client customer = new Client(name, email, phone);
 
-                    System.out.println("Enter the section you want to reserve seats in: ");
+                    System.out.println("Enter the section you want to reserve seats in (Field Level, Main Level, Grandstand Level): ");
+                    
                     String section = scanner.nextLine();
 
                     System.out.println("Enter the chair numbers to reserve(comma-separated): ");
@@ -90,14 +93,39 @@ public class ReservationSystem {
                 case 4:
                     stateFarmStadium.showWaitlist(); 
                     break; 
+                
                 case 5:
+                    
+                    System.out.println("Please enter the name under the reservation");
+                    scanner.nextLine();
+                    String name2 = scanner.nextLine();
+            
+                    System.out.println("Enter your email: ");
+                    String email2 = scanner.nextLine();
+
+                    System.out.println("Enter your phone number: ");
+                    String phone2 = scanner.nextLine();
+                
+                    Client customer2 = new Client(name2, email2, phone2);
+
+                    System.out.println("Enter the chair numbers to cancel reservation(comma-separated): ");
+                    List<Integer> chairNumbers2 = new ArrayList<>();
+                    
+                    for(String chairNumber : scanner.nextLine().split(",")){
+                        chairNumbers2.add(Integer.parseInt(chairNumber.trim())); //Trim used to remove spaces, if there are any
+                    }
+
+                    stateFarmStadium.cancelReservation(customer2, chairNumbers2);
+                    stateFarmStadium.updateAvailableSeats();
+                    break;
+                case 6:
                     System.out.println("-------------------------------------------------------------");
                     System.out.println("Thank You! ");
                     // scanner.close(); 
                     break; 
 
                 default:
-                    System.out.println("Option must be within 1 and 5.");
+                    System.out.println("Option must be within 1 and 6.");
                     break; 
 
 

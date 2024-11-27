@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Stadium",
+            "request": "launch",
+            "mainClass": "Stadium",
+            "projectName": "Data-Structures-Project-Edward-Logan-Ruben-_918bb86e"
+        },
+        {
+            "type": "java",
+            "name": "ReservationSystem",
+            "request": "launch",
+            "mainClass": "ReservationSystem",
+            "projectName": "Data-Structures-Project-Edward-Logan-Ruben-_918bb86e"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
