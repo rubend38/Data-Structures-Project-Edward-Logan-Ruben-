@@ -1,11 +1,4 @@
-
-// import src.Client; 
-// import src.Chair; 
-
 import java.util.*; 
-
-
-
 
 public class Stadium{
     private Set<Chair> availableChairs;
@@ -38,6 +31,8 @@ public class Stadium{
         }
         
     }
+
+    //Metodo que muestra todas las sillas disponibles en el estadio 
     public void showAvailableSeats() {
         int fieldLevelCount = 0;
         int mainLevelCount = 0;
@@ -64,7 +59,7 @@ public class Stadium{
     }
 
 
-
+    //Hacer reservaciones de sillas en el estadio
     public String makeReservation(Client customer, String section, List<Integer> chairNumbers) {
 
         List<Chair> chairsToReserve = new ArrayList<>();
@@ -92,7 +87,7 @@ public class Stadium{
             }
         }
 
-        // Reserve all requred chairs
+        // Reserve all required chairs
         for (Chair chair : chairsToReserve) {
             chair.reservation(customer.getName());
             reservations.put(chair, customer);
@@ -106,6 +101,8 @@ public class Stadium{
 
     }
 
+    //Metodo que itera por el HashMap de reservaciones para saber que sillas estan reservadas 
+
     public List<Integer> getClientReservations(Client client){ 
         List<Integer> reservedChairs = new ArrayList<>(); 
         for(Map.Entry<Chair, Client> entry: reservations.entrySet()){
@@ -116,6 +113,7 @@ public class Stadium{
         return reservedChairs; 
     }
 
+    //Cancelar reservacion 
     public String cancelReservation(Client customer, List<Integer> chairNumbers){
         List<Chair> chairsToCancel = new ArrayList<>(); 
         List<Chair> canceledChairs = new ArrayList<>(); 
@@ -134,7 +132,8 @@ public class Stadium{
             }
 
             if(!found){
-                return "Error: Chair number "+ chairNumber + " is either not reserved or not reserved by " + customer.getName() + "."; 
+                return "Error: Chair number "+ chairNumber + " is either not reserved or not reserved by " +
+                 customer.getName() + "."; 
             }
         }
 
@@ -155,7 +154,8 @@ public class Stadium{
                 Client nextClient = waitlist.poll(); //Sacamos el cliente mas antiguo
                 chair.reservation(nextClient.getName()); 
                 reservations.put(chair, nextClient); 
-                transactionHistory.add("Assigned from waitllist: " + nextClient.getName() + " for Chair " + chair.getnumber()); 
+                transactionHistory.add("Assigned from waitllist: " + nextClient.getName() + " for Chair " +
+                 chair.getnumber()); 
                 undoStack.push("RESERVE: " + chair.getnumber() + ":" + nextClient.getName()); 
             }
         }
@@ -163,6 +163,7 @@ public class Stadium{
         return "Cancellation successful for " + customer.getName() + ". Chairs: " + chairNumbers; 
     }
 
+    //Metodo Auxiliar para obtener las listas de espera 
     private Queue<Client> getWaitlist(String section) {
         switch(section) {
             case "Field Level": 
@@ -177,13 +178,120 @@ public class Stadium{
         }
     }
 
+    //Metodo que actua como "UNDO" revirtiendo la ultima accion realizada utilizando un Stack.  
+    public String undoLastAction() {
+
+        if(undoStack.isEmpty()){
+            return "No actions to undo."; 
+        }
+
+        String lastAction = undoStack.pop(); 
+        String[] actionParts = lastAction.split(":"); 
+        String actionType = actionParts[0]; 
+        int chairNumber = Integer.parseInt(actionParts[1]); 
+        String clientName = actionParts[2]; 
+
+        //Buscando la silla asociada a la reservacion 
+
+        Chair targetChair = null; 
+        for(Chair chair:availableChairs){
+            if(chair.getnumber() == chairNumber){
+                targetChair = chair; 
+                break; 
+            }
+        }
+
+        if(targetChair == null){
+            return "Error: Chair "+ chairNumber + "not found.";  
+        }
+
+        switch(actionType){
+            case "RESERVE":  //Revertir reservacion
+
+                Client client = reservations.get(targetChair); 
+                if(client != null && client.getName().equals(clientName)){
+                    targetChair.cancelReservation(); 
+                    reservations.remove(targetChair); 
+                    return "Reservation undone for chair "+ chairNumber + "by " + clientName + "."; 
+
+                }
+                break; 
+            case "CANCEL": //Restaurar cancelacion 
+            targetChair.reservation(clientName); 
+            reservations.put(targetChair, new Client(clientName, "unknown", "unknown")); 
+            return "Cancellation undone for Chair " + chairNumber + " by " + clientName + "."; 
+
+        }
+        return "Undo operation failed"; 
+
+    }
+
+    public void showReservations() {
+        if(reservations.isEmpty()){
+            System.out.println("No active reservations."); 
+            return ;
+        }
+
+        System.out.println("Active reservations:");
+        for(Map.Entry<Chair,Client> entry: reservations.entrySet()){
+            Chair chair = entry.getKey(); 
+            Client client = entry.getValue(); 
+            System.out.println("Chair " + chair.getnumber() + " - " + chair.getsection() +
+             " - Reserved by " + client.getName()); 
+        }
+    }
+
+    public void showWaitlist(){
+        System.out.println("Waitlists"); 
+        System.out.print("Field Level: "); 
+
+        if(fieldWaitlist.isEmpty()){
+            System.out.println("No clients in waitlist.");
+        }
+        else{
+            for(Client client: fieldWaitlist){
+                System.out.print(client.getName() + " ");
+
+            }
+            System.out.println(); 
+            
+        }
+
+        System.out.print("Main Level: "); 
+        if(mainWaitlist.isEmpty()){
+            System.out.println("No clients in waitlist");
+        }
+        else{
+            for(Client client: mainWaitlist){
+                System.out.print(client.getName() + " "); 
+            }
+            System.out.println(); 
+        }
+
+        System.out.print("Grandstand Level: "); 
+        if(grandstandWaitlist.isEmpty()){
+            System.out.println("No clients in waitlist.");
+        }
+        else{
+            for(Client client: grandstandWaitlist){
+                System.out.print(client.getName() + " "); 
+            }
+            System.out.println(); 
+            
+        }
+
+    }
+
+
+
 
 
     public static void main(String args[]) {
 
         Stadium stateFarmStadium = new Stadium(500,1000,2000);
         Client Edward = new Client("Edward", "edward.carde@upr.edu", "787-612-7168");
-        System.out.println(stateFarmStadium.makeReservation(Edward, "Field Level", Arrays.asList(344,345,346,347,348,349))); 
+        System.out.println(stateFarmStadium.makeReservation(Edward, "Field Level",
+         Arrays.asList(344,345,346,347,348,349))); 
         System.out.println("Edward Reservations: " + Edward.getReservations(stateFarmStadium)); 
         System.out.println(stateFarmStadium.cancelReservation(Edward, Arrays.asList(344,345))); 
         System.out.println("Edward Reservations: " + Edward.getReservations(stateFarmStadium));

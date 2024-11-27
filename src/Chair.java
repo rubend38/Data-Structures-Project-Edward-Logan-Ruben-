@@ -1,4 +1,3 @@
-
 public class Chair {
     private int number;
     private int price;
