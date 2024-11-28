@@ -90,33 +90,44 @@ public class ReservationSystem {
 
                         // Leer la sección seleccionada
                         int sectionOption = -1;
-                        try {
-                            sectionOption = scanner.nextInt();
-                            scanner.nextLine(); // Consumir el salto de línea después del entero
-                        } catch (Exception e) {
-                            System.out.println("Invalid input. Please enter a number between 1 and 3.");
-                            scanner.nextLine(); // Limpiar el buffer
-                            continue; // Volver al inicio del loop
-                        }
 
+
+                        sectionOption = scanner.nextInt();
+                        boolean valid = true; 
                         String section = "";
-                        switch (sectionOption) {
-                            case 1:
-                                section = "Field Level";
-                                break;
-                            case 2:
-                                section = "Main Level";
-                                break;
-                            case 3:
-                                section = "Grandstand Level";
-                                break;
-                            default:
-                                System.out.println("Invalid section. Please try again.");
-                                continue; // Volver al inicio del loop
+
+                        while(valid){
+                            if(sectionOption<1 || sectionOption >3){
+                                System.out.println("Invalid input. Please enter a number between 1 and 3.");
+                                sectionOption = scanner.nextInt();
+
+                            }
+                            else{
+                                switch (sectionOption) {
+                                    case 1:
+                                        section = "Field Level";
+                                        break;
+                                    case 2:
+                                        section = "Main Level";
+                                        break;
+                                    case 3:
+                                        section = "Grandstand Level";
+                                        break;
+                                    default:
+                                        System.out.println("Invalid section. Please try again.");
+                                        continue; // Volver al inicio del loop
+
+                                
+                                }
+                                valid = false; 
+                            }
+
+
                         }
 
                         // Leer los números de sillas
                         System.out.println("Enter the chair numbers to reserve (comma-separated): ");
+                        scanner.nextLine(); 
                         List<Integer> chairNumbers = new ArrayList<>();
                         for (String chairNumber : scanner.nextLine().split(",")) {
                             chairNumbers.add(Integer.parseInt(chairNumber.trim()));
