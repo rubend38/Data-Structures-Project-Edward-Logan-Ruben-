@@ -15,7 +15,8 @@ public class ReservationSystem {
         System.out.println("3. See available seating.");
         System.out.println("4. See wait lists.");
         System.out.println("5 Cancel reservation");
-        System.out.println("6. Exit");
+        System.out.println("6. Undo previous action.");
+        System.out.println("7. Exit");
         System.out.println("-------------------------------------------------------------");
 
     }
@@ -35,8 +36,9 @@ public class ReservationSystem {
         System.out.println();
         stateFarmStadium.showAvailableSeats();//shows the user the available seating areas to choose from
         
-        //continues to run the command prompt loop until the option chosen is 6.
-        while(optionChosen != 6){
+        //continues to run the command prompt loop until the option chosen is 6.6
+
+        while(optionChosen != 7){
             commandPrompt();
             System.out.println();
             stateFarmStadium.updateAvailableSeats();//updates any changes made to the seating reservations
@@ -172,6 +174,10 @@ public class ReservationSystem {
                     break;
                     //if option 6 is chosen then the system's command prompt will close and the program will stop running
                 case 6:
+                    System.out.println("Undoing Previous Action");
+                    stateFarmStadium.undoLastAction();
+                    break;
+                case 7:
                     System.out.println("-------------------------------------------------------------");
                     System.out.println("Thank You! ");
                     // scanner.close(); 

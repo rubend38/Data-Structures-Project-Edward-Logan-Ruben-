@@ -164,8 +164,7 @@ public class Stadium{
             reservations.put(chair, customer);
             transactionHistory
                     .add("Reserved: " + customer.getName() + " in " + section + " (Chair " + chair.getnumber() + ")");
-            undoStack.push("RESERVE: " + chair.getnumber() + ":" + customer.getName());
-
+            undoStack.push("RESERVE:" + chair.getnumber() + ":" + customer.getName());
         }
 
         return "Reservation succesful for " + customer.getName() + " (Chairs " + chairNumbers + ").";
@@ -376,13 +375,7 @@ public class Stadium{
         System.out.println("Edward Reservations: " + Edward.getReservations(stateFarmStadium)); 
         System.out.println(stateFarmStadium.cancelReservation(Edward, Arrays.asList(344,345))); 
         System.out.println("Edward Reservations: " + Edward.getReservations(stateFarmStadium));
-        // System.out.println("-------------------------------------------------------------"); 
-
-        
-        //System.out.println(Edward.toString());
-
-        // Chair Chair17 = new Chair(17, "Field Level", 300);
-        //Chair17.reservation(Edward.getName()); 
+       
 
     }
 
