@@ -38,4 +38,5 @@ The system comprises four main components:
    - **Option 3**: View available seats in each section.
    - **Option 4**: View the waitlist for each section.
    - **Option 5**: Cancel a reservation by specifying your details and seat numbers.
-   - **Option 6**: Exit the application.
+   - **Option 6**: Remakes the reservation if you cancelled it and cancells it if you made it.  
+   - **Option 7**: Exit the application.
