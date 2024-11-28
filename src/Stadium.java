@@ -62,75 +62,6 @@ public class Stadium{
         System.out.println("Grandstand Level: " + grandstandLevelCount  +" at $45");
     }
 
-
-    // public String makeReservation(Client customer, String section, List<Integer> chairNumbers) {
-
-    //     List<Chair> chairsToReserve = new ArrayList<>();
-    //     int price = 0;
-    //     String normalizedSection = "";
-    //     //Checking if section is full. Automatically adds the client to the queue if the section is full
-    //     if(section.equalsIgnoreCase("Field Level")){
-    //         price = 300;
-    //         normalizedSection = "Field Level";
-    //         if(fieldLevelCount == 0){
-    //             fieldWaitlist.add(customer);
-    //             return section + " section is full. Added " + customer.getName()+ " to " + section + " waitlist.";
-    //         }
-    //     } else if(section.equalsIgnoreCase("Main Level")){
-    //         price = 120;
-    //         normalizedSection = "Main Level";
-    //         if(mainLevelCount == 0){
-    //             mainWaitlist.add(customer);
-    //             return section + " section is full. Added " + customer.getName()+ " to " + section + " waitlist.";
-    //         }
-    //     } else if(section.equalsIgnoreCase("Grandstand Level")){
-    //         price = 45;
-    //         normalizedSection = "Grandstand Level";
-    //         if(grandstandLevelCount == 0){
-    //             grandstandWaitlist.add(customer);
-    //             return section + " section is full. Added " + customer.getName()+ " to " + section + " waitlist.";
-    //         }
-    //     } else {
-    //         return "Invalid section.";
-    //     }
-
-
-    //     // Checking if chairs are available
-    //     for (int chairNumber : chairNumbers) {
-    //         boolean found = false;
-
-    //         for (Chair chair : availableChairs) {
-
-    //             if (chair.getnumber() == chairNumber) {
-    //                 if (!chair.isavailable()) {
-    //                     return "Chair number " + chairNumber + " is not available.";
-    //                 }
-
-    //                 chairsToReserve.add(chair);
-    //                 found = true; 
-    //             }
-    //         }
-
-    //         if (!found) {
-    //             return "Chair number " + chairNumber + " does not exist.";
-
-    //         }
-    //     }
-
-    //     // Reserve all required chairs
-    //     for (Chair chair : chairsToReserve) {
-    //         chair.reservation(customer.getName());
-    //         reservations.put(chair, customer);
-    //         transactionHistory
-    //                 .add("Reserved: " + customer.getName() + " in " + section + " (Chair " + chair.getnumber() + ")");
-    //         undoStack.push("RESERVE: " + chair.getnumber() + ":" + customer.getName());
-    //     }
-        
-    //     return "Reservation succesful for " + customer.getName() + ": Chairs: " + chairNumbers + " in section " + normalizedSection + ". Your total is: $" + price * chairNumbers.size() + ".";
-
-    // }
-    
-    // Hacer reservaciones de sillas en el estadio
     public String makeReservation(Client customer, String section, List<Integer> chairNumbers) {
 
         List<Chair> chairsToReserve = new ArrayList<>();
@@ -276,6 +207,10 @@ public class Stadium{
             return "Error: Chair "+ chairNumber + "not found.";  
         }
 
+        
+
+        String undoMessage; 
+
         switch(actionType){
             case "RESERVE":  //Revertir reservacion
 
@@ -283,17 +218,27 @@ public class Stadium{
                 if(client != null && client.getName().equals(clientName)){
                     targetChair.cancelReservation(); 
                     reservations.remove(targetChair); 
-                    return "Reservation undone for chair "+ chairNumber + "by " + clientName + "."; 
+                    undoMessage = "Reservation undone: Chair " + chairNumber + " reserved by " + clientName; 
+                    return undoMessage; 
 
                 }
                 break; 
             case "CANCEL": //Restaurar cancelacion 
             targetChair.reservation(clientName); 
             reservations.put(targetChair, new Client(clientName, "unknown", "unknown")); 
-            return "Cancellation undone for Chair " + chairNumber + " by " + clientName + "."; 
+            undoMessage = "Cancellation undone: Chair " + chairNumber + " previously canceled by " + clientName;
+            return undoMessage; 
+            
+            default:
+                undoMessage = "Undo operation failed."; 
+                System.out.println(undoMessage); 
+                return undoMessage; 
 
         }
-        return "Undo operation failed"; 
+        
+        undoMessage = "Undo operation failed.";
+        System.out.println(undoMessage);
+        return undoMessage;
 
     }
 
