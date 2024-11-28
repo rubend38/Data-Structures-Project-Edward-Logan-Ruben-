@@ -25,20 +25,10 @@ public class ReservationSystem {
         //Creates the stadium to be manipulated
         Stadium stateFarmStadium = new Stadium(500, 1000, 2000);
 
-
-
-        Client Edward = new Client("Edward", "edward.carde@upr.edu", "787-612-7168");
-        System.out.println(stateFarmStadium.makeReservation(Edward, "Field Level",
-        Arrays.asList(344,345,346,347,348,349))); 
-        System.out.println("Edward Reservations: " + Edward.getReservations(stateFarmStadium)); 
-        System.out.println(stateFarmStadium.cancelReservation(Edward, Arrays.asList(344,345))); 
-        System.out.println("Edward Reservations: " + Edward.getReservations(stateFarmStadium));
-        
-
-
         //initializing command prompt variables
         int optionChosen = 0;
         Scanner scanner = new Scanner(System.in);
+        HashMap<String, Client> registeredClients = new HashMap<>(); 
 
         System.out.println("-------------------------------------------------------------");
         System.out.println("Available seats:" );
@@ -55,35 +45,93 @@ public class ReservationSystem {
             optionChosen = scanner.nextInt();
 
             switch(optionChosen){
+
                 //if 1 is entered as the desired option then information is asked to the user and a list of chairs is reserved.
-                case 1: 
+                case 1:
                     System.out.println("-------------------------------------------------------------");
-                    System.out.println("Enter your name: ");
 
-                    scanner.nextLine();
-                    String name = scanner.nextLine();
-                
-                    System.out.println("Enter your email: ");
-                    String email = scanner.nextLine();
+                    while (true) {
+                        // Solicitar el nombre del cliente
+                        System.out.println("Enter your name (or type 'exit' to return to the main menu): ");
 
-                    System.out.println("Enter your phone number: ");
-                    String phone = scanner.nextLine();
-                    
-                    Client customer = new Client(name, email, phone);
+                        if (scanner.hasNextLine()) {
+                            scanner.nextLine(); // Consumir el salto de línea residual (si lo hay)
+                        }
 
-                    System.out.println("Enter the section you want to reserve seats in (Field Level, Main Level, Grandstand Level): ");
-                    
-                    String section = scanner.nextLine();
+                        String name = scanner.nextLine().trim(); // Leer el nombre del cliente
+                        if (name.equalsIgnoreCase("exit")) {
+                            break; // Salir al menú principal
+                        }
 
-                    System.out.println("Enter the chair numbers to reserve(comma-separated): ");
-                    List<Integer> chairNumbers = new ArrayList<>();
-                    
-                    for(String chairNumber : scanner.nextLine().split(",")){
-                        chairNumbers.add(Integer.parseInt(chairNumber.trim())); //Trim used to remove spaces, if there are any
+                        Client customer;
+
+                        // Verificar si el cliente ya existe
+                        if (registeredClients.containsKey(name)) {
+                            customer = registeredClients.get(name);
+                            System.out.println("Welcome back, " + customer.getName() + "!");
+                        } else {
+                            // Nuevo cliente: pedir email y teléfono
+                            System.out.println("New customer. Please provide your email: ");
+                            String email = scanner.nextLine().trim();
+
+                            System.out.println("Please provide your phone number: ");
+                            String phone = scanner.nextLine().trim();
+
+                            customer = new Client(name, email, phone); // Crear el cliente
+                            registeredClients.put(name, customer); // Registrar al cliente
+                            System.out.println("Welcome, " + customer.getName() + "!");
+                        }
+
+                        // Elegir sección
+                        System.out.println("Choose a section to reserve seats:");
+                        System.out.println("1. Field Level\n2. Main Level\n3. Grandstand Level");
+
+                        // Leer la sección seleccionada
+                        int sectionOption = -1;
+                        try {
+                            sectionOption = scanner.nextInt();
+                            scanner.nextLine(); // Consumir el salto de línea después del entero
+                        } catch (Exception e) {
+                            System.out.println("Invalid input. Please enter a number between 1 and 3.");
+                            scanner.nextLine(); // Limpiar el buffer
+                            continue; // Volver al inicio del loop
+                        }
+
+                        String section = "";
+                        switch (sectionOption) {
+                            case 1:
+                                section = "Field Level";
+                                break;
+                            case 2:
+                                section = "Main Level";
+                                break;
+                            case 3:
+                                section = "Grandstand Level";
+                                break;
+                            default:
+                                System.out.println("Invalid section. Please try again.");
+                                continue; // Volver al inicio del loop
+                        }
+
+                        // Leer los números de sillas
+                        System.out.println("Enter the chair numbers to reserve (comma-separated): ");
+                        List<Integer> chairNumbers = new ArrayList<>();
+                        for (String chairNumber : scanner.nextLine().split(",")) {
+                            chairNumbers.add(Integer.parseInt(chairNumber.trim()));
+                        }
+
+                        // Hacer la reservación
+                        String result = stateFarmStadium.makeReservation(customer, section, chairNumbers);
+                        System.out.println(result);
+
+                        // Preguntar si desea hacer otra reservación
+                        System.out.println("Do you want to make another reservation? (yes/no): ");
+                        String continueReservation = scanner.nextLine().trim();
+                        if (continueReservation.equalsIgnoreCase("no")) {
+                            break; // Salir del loop interno
+                        }
                     }
-
-                    String result = stateFarmStadium.makeReservation(customer, section, chairNumbers);
-                    System.out.println(result);
+                    break;
                 case 2:
                 //if 2 is inputed by the user then the list of made reservations is showed.
                     stateFarmStadium.showReservations(); 
@@ -100,28 +148,27 @@ public class ReservationSystem {
                 
                 //if option 5 is chosen then the system will ask the user for information and cancel any reservation under that information.
                 case 5:
-                
-                    System.out.println("Please enter the name under the reservation");
-                    scanner.nextLine();
-                    String name2 = scanner.nextLine();
-            
-                    System.out.println("Enter your email: ");
-                    String email2 = scanner.nextLine();
+                    System.out.println("Please enter the name under the reservation:");
+                    scanner.nextLine(); // Consumir el salto de línea
+                    String cancelName = scanner.nextLine();
 
-                    System.out.println("Enter your phone number: ");
-                    String phone2 = scanner.nextLine();
-                
-                    Client customer2 = new Client(name2, email2, phone2);
-
-                    System.out.println("Enter the chair numbers to cancel reservation(comma-separated): ");
-                    List<Integer> chairNumbers2 = new ArrayList<>();
-                    
-                    for(String chairNumber : scanner.nextLine().split(",")){
-                        chairNumbers2.add(Integer.parseInt(chairNumber.trim())); //Trim used to remove spaces, if there are any
+                    // Buscar cliente por nombre
+                    Client cancelClient = stateFarmStadium.findClientByName(cancelName);
+                    if (cancelClient == null) {
+                        System.out.println("No reservations found under the name: " + cancelName);
+                        break;
                     }
 
-                    stateFarmStadium.cancelReservation(customer2, chairNumbers2);
-                    stateFarmStadium.updateAvailableSeats();
+                    System.out.println("Reservations under " + cancelName + ": "
+                            + stateFarmStadium.getClientReservations(cancelClient));
+                    System.out.println("Enter the chair numbers to cancel reservation (comma-separated): ");
+                    List<Integer> chairNumbers2 = new ArrayList<>();
+                    for (String chairNumber : scanner.nextLine().split(",")) {
+                        chairNumbers2.add(Integer.parseInt(chairNumber.trim()));
+                    }
+
+                    String cancelResult = stateFarmStadium.cancelReservation(cancelClient, chairNumbers2);
+                    System.out.println(cancelResult);
                     break;
                     //if option 6 is chosen then the system's command prompt will close and the program will stop running
                 case 6:
